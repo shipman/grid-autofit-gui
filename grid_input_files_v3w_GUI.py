@@ -806,6 +806,19 @@ class Worker(QtCore.QObject): # looks like we need to use threading in order to 
         os.chdir(job_name)
         #print "The job_name as of line 767 is %s"%job_name
 
+
+        temp_peaklist = ""
+
+        for item in peaklist:
+            if temp_peaklist != "":
+                temp_peaklist += "\n"
+            temp_string = "%s, %s"%(str(item[0]),str(item[1]))
+            temp_peaklist = temp_peaklist + temp_string
+
+        peaklist_fh = open("peaklist.txt","w")
+        peaklist_fh.write(temp_peaklist)
+        peaklist_fh.close()
+
         grid_counter = 0
         obj_list = []
 
