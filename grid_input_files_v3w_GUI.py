@@ -404,6 +404,25 @@ class Ui_Dialog_First_Window(object):
         self.are_we_there_yet()
 
     def plot_input(self):
+        global low_intensity
+        global high_intensity
+
+        try:
+            low_intensity = float(self.inten_low_input.text())
+        except:
+            self.error_message = "The low intensity threshold should be a number!"
+            self.raise_error()
+            self.inten_low_input.setFocus()
+            return 0
+
+        try:
+            high_intensity = float(self.inten_high_input.text())
+        except:
+            self.error_message = "The high intensity threshold should be a number!"
+            self.raise_error()
+            self.inten_high_input.setFocus()
+            return 0
+
         rcParams.update({'figure.autolayout': True}) # Magic from here: https://stackoverflow.com/questions/6774086/why-is-my-xlabel-cut-off-in-my-matplotlib-plot
 
         self.plot = Actual_Plot()
@@ -416,6 +435,8 @@ class Ui_Dialog_First_Window(object):
     def gen_files(self): # will eventually do the thing
         # start it out with checks on all of the fields, then pass it off to the worker thread
         # do the checks here
+        global low_intensity
+        global high_intensity
 
         try:
             num_procs = int(self.num_procs_input.text())
@@ -517,6 +538,22 @@ class Ui_Dialog_First_Window(object):
             self.error_message = "The final resolution to spline to should be a number!"
             self.raise_error()
             self.spline_value_input.setFocus()
+            return 0
+
+        try:
+            low_intensity = float(self.inten_low_input.text())
+        except:
+            self.error_message = "The low intensity threshold should be a number!"
+            self.raise_error()
+            self.inten_low_input.setFocus()
+            return 0
+
+        try:
+            high_intensity = float(self.inten_high_input.text())
+        except:
+            self.error_message = "The high intensity threshold should be a number!"
+            self.raise_error()
+            self.inten_high_input.setFocus()
             return 0
 
         # Now we decide which searches to do based on the check boxes.
