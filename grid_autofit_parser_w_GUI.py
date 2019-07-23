@@ -25,6 +25,15 @@ class Ui_Dialog_First_Window(object):
         self.gridLayout = QtWidgets.QGridLayout(Dialog)
         self.gridLayout.setObjectName("gridLayout")
 
+        self.font_plus_button = QtWidgets.QPushButton(Dialog)
+        self.font_plus_button.setObjectName = "font_plus_button"
+        self.font_plus_button.clicked.connect(partial(self.font_plus,Dialog))
+        self.gridLayout.addWidget(self.font_plus_button, 0, 0, 1, 1)
+        self.font_minus_button = QtWidgets.QPushButton(Dialog)
+        self.font_minus_button.setObjectName = "font_minus_button"
+        self.font_minus_button.clicked.connect(partial(self.font_minus,Dialog))
+        self.gridLayout.addWidget(self.font_minus_button, 0, 1, 1, 1)
+
         self.file_import_label = QtWidgets.QLabel(Dialog)
         self.file_import_label.setObjectName("file_import_label")
         self.gridLayout.addWidget(self.file_import_label, 1, 0, 1, 3)
@@ -36,40 +45,43 @@ class Ui_Dialog_First_Window(object):
         self.browse_import_button.setObjectName("browse_import_button")
         self.browse_import_button.clicked.connect(self.browse)
         self.gridLayout.addWidget(self.browse_import_button, 1, 6, 1, 1)
-        self.font_plus_button = QtWidgets.QPushButton(Dialog)
-        self.font_plus_button.setObjectName = "font_plus_button"
-        self.font_plus_button.clicked.connect(partial(self.font_plus,Dialog))
-        self.gridLayout.addWidget(self.font_plus_button, 0, 0, 1, 1)
-        self.font_minus_button = QtWidgets.QPushButton(Dialog)
-        self.font_minus_button.setObjectName = "font_minus_button"
-        self.font_minus_button.clicked.connect(partial(self.font_minus,Dialog))
-        self.gridLayout.addWidget(self.font_minus_button, 0, 1, 1, 1)
+
+        self.OMC_label = QtWidgets.QLabel(Dialog)
+        self.OMC_label.setObjectName("OMC_label")
+        self.gridLayout.addWidget(self.OMC_label, 2, 0, 1, 3)
+        self.OMC_input = QtWidgets.QLineEdit(Dialog)
+        self.OMC_input.setObjectName("OMC_input")
+        self.OMC_input.setToolTip("Results with an OMC (in MHz) less than this will be saved in the summary file.")
+        self.gridLayout.addWidget(self.OMC_input, 2, 3, 1, 1)
+        self.OMC_input.setText("2.0") # default value
+
+        self.gridLayout.addWidget(QHLine(), 3, 0, 1, 7)
 
         self.parse_results_button = QtWidgets.QPushButton(Dialog) # Needs to be updated to a "do the thing" for a specific, not FT thing.
         self.parse_results_button.setObjectName("parse_results_button")
         self.parse_results_button.clicked.connect(self.parse_results)
-        self.gridLayout.addWidget(self.parse_results_button, 2, 0, 1, 4)
+        self.gridLayout.addWidget(self.parse_results_button, 4, 0, 1, 4)
         self.parse_results_button.setEnabled(False)
         self.exit_button = QtWidgets.QPushButton(Dialog)
         self.exit_button.setObjectName("exit_button")
         self.exit_button.clicked.connect(app.quit) # Probably should interrupt if haven't saved yet
-        self.gridLayout.addWidget(self.exit_button, 2, 4, 1, 3)
+        self.gridLayout.addWidget(self.exit_button, 4, 4, 1, 3)
 
         self.status_window = QtWidgets.QTextEdit(Dialog)
         self.status_window.setObjectName("status_window")
-        self.gridLayout.addWidget(self.status_window, 3, 0, 5, 7) # make it big!!!!
+        self.gridLayout.addWidget(self.status_window, 5, 0, 5, 7) # make it big!!!!
         self.status_window.setReadOnly(True)
 
         self.progress = QtWidgets.QProgressBar(Dialog)
         self.progress.setObjectName("progress")
-        self.gridLayout.addWidget(self.progress, 9, 0, 1, 7)
+        self.gridLayout.addWidget(self.progress, 10, 0, 1, 7)
         self.progress.setValue(0)
 
         self.font_plus_button.shortcut = QtWidgets.QShortcut(QtGui.QKeySequence("Ctrl++"), self.font_plus_button)
         self.font_plus_button.shortcut.activated.connect(partial(self.font_plus,Dialog))
         self.font_minus_button.shortcut = QtWidgets.QShortcut(QtGui.QKeySequence("Ctrl+-"), self.font_minus_button)
         self.font_minus_button.shortcut.activated.connect(partial(self.font_minus,Dialog))
-        self.browse_import_button.shortcut = QtWidgets.QShortcut(QtGui.QKeySequence("Ctrl+O"), self.browse_import_button)
+        self.browse_import_button.shortcut = QtWidgets.QShortcut(QtGui.QKeySequence("Ctrl+D"), self.browse_import_button)
         self.browse_import_button.shortcut.activated.connect(self.browse)
         self.parse_results_button.shortcut = QtWidgets.QShortcut(QtGui.QKeySequence("Ctrl+R"), self.parse_results_button)
         self.parse_results_button.shortcut.activated.connect(self.parse_results)
@@ -78,7 +90,7 @@ class Ui_Dialog_First_Window(object):
 
         self.font_plus_button.setWhatsThis("Shortcut: Ctrl++")
         self.font_minus_button.setWhatsThis("Shortcut: Ctrl+-")
-        self.browse_import_button.setWhatsThis("Shortcut: Ctrl+O")
+        self.browse_import_button.setWhatsThis("Shortcut: Ctrl+D")
         self.parse_results_button.setWhatsThis("Shortcut: Ctrl+R")
         self.exit_button.setWhatsThis("Shortcut: Ctrl+Q")
 
@@ -92,6 +104,7 @@ class Ui_Dialog_First_Window(object):
         self.font_minus_button.setText(_translate("Dialog", "Decrease Font"))
         self.file_import_label.setText(_translate("Dialog", "Directory containing completed jobs"))
         self.browse_import_button.setText(_translate("Dialog", "Select Directory"))
+        self.OMC_label.setText(_translate("Dialog", "OMC (MHz) of worst result to keep"))
         self.parse_results_button.setText(_translate("Dialog", "Summarize Results!"))
         self.exit_button.setText(_translate("Dialog", "Exit"))
 
@@ -115,8 +128,31 @@ class Ui_Dialog_First_Window(object):
             self.file_import_input.setText(dirName)
             self.parse_results_button.setEnabled(True)
 
+    def raise_error(self):
+        self.error_dialog = QtWidgets.QMessageBox()
+        self.error_dialog.setIcon(QtWidgets.QMessageBox.Critical)
+        self.error_dialog.setWindowTitle("Something's Wrong!")
+        self.error_dialog.setText(self.error_message)
+        self.error_dialog.show()
+
     def parse_results(self): # should actually do a thing later
+
+        try:
+            OMC_thresh = float(self.OMC_input.text())
+        except:
+            self.error_message = "The OMC threshold should be a number!"
+            self.raise_error()
+            self.OMC_input.setFocus()
+            return 0
+
         job_name = self.file_import_input.text()
+
+        if job_name == "":
+            self.error_message = "Please select a directory containing results and try again."
+            self.raise_error()
+            self.browse_import_button.setFocus()
+            return 0
+
         suffix = job_name.split("/")[-1]
 
         os.chdir(job_name)
@@ -130,7 +166,7 @@ class Ui_Dialog_First_Window(object):
 
         # send things off to a worker thread
         thread = self.thread = QtCore.QThread()
-        worker = self.worker = Worker(x,suffix) # will want to give it whatever arguments it needs
+        worker = self.worker = Worker(x,suffix,OMC_thresh) # will want to give it whatever arguments it needs
         worker.moveToThread(thread)
         thread.started.connect(worker.run)
         worker.progress.connect(self.progress_update)
@@ -152,13 +188,20 @@ class Ui_Dialog_First_Window(object):
             self.status_window.append("Complete!")
             self.exit_button.setFocus()
 
+class QHLine(QtWidgets.QFrame): # Using this: https://stackoverflow.com/questions/5671354/how-to-programmatically-make-a-horizontal-line-in-qt
+    def __init__(self):
+        super(QHLine, self).__init__()
+        self.setFrameShape(QtWidgets.QFrame.HLine)
+        self.setFrameShadow(QtWidgets.QFrame.Sunken)
+
 class Worker(QtCore.QObject): # looks like we need to use threading in order to get progress bars to update!
 # Thanks go to this thread: https://gis.stackexchange.com/questions/64831/how-do-i-prevent-qgis-from-being-detected-as-not-responding-when-running-a-hea
-    def __init__(self, list_of_jobs, suffix, *args, **kwargs):
+    def __init__(self, list_of_jobs, suffix, OMC_thresh, *args, **kwargs):
         QtCore.QObject.__init__(self, *args, **kwargs)
         self.percentage = 0
         self.list_of_jobs = list_of_jobs
         self.suffix = suffix
+        self.OMC_thresh = OMC_thresh
 
     def run(self): # should actually do a thing instead of just saying it does
         best_results = ''
@@ -176,7 +219,7 @@ class Worker(QtCore.QObject): # looks like we need to use threading in order to 
             if os.path.isdir(entry):
                 os.chdir(entry)
 
-                (flag,more_results) = parse_best100(entry)
+                (flag,more_results) = parse_best100(entry,self.OMC_thresh)
                 if flag == 1:
                     jobs_with_interesting_output += 1
                     best_results += more_results
@@ -191,11 +234,11 @@ class Worker(QtCore.QObject): # looks like we need to use threading in order to 
                 temp_string = "%s percent complete by file number! Taken %s seconds so far, about %s seconds remaining."%(percentage,int(math.ceil(elapsed_time)),int(math.ceil(remaining_time)))
                 self.status.emit(temp_string)
 
-        temp_string = "Of the %s jobs, %s of them had output with results of OMC < 2.0 MHz that will be written to file."%(total_num_jobs,jobs_with_interesting_output)
+        temp_string = "Of the %s jobs, %s of them had output with results of OMC < %s MHz that will be written to file."%(total_num_jobs,jobs_with_interesting_output,self.OMC_thresh)
         self.status.emit(temp_string)
 
         if best_results == '':
-            best_results = "Sadly, none of the jobs had results with OMC < 2.0 MHz."
+            best_results = "Sadly, none of the jobs had results with OMC < %s MHz."%(self.OMC_thresh)
 
         f_summary = open('%s_summary.txt'%(self.suffix),'w')
         f_summary.write(best_results)
@@ -216,7 +259,7 @@ class Worker(QtCore.QObject): # looks like we need to use threading in order to 
     status = QtCore.pyqtSignal(str)
 
 
-def parse_best100(dir_name):
+def parse_best100(dir_name,OMC_thresh):
     flag = 0
     new_results = ''
 
@@ -234,7 +277,7 @@ def parse_best100(dir_name):
             C = temp_line[11]
             omc = temp_line[20]
 
-            if float(omc) <= 2.0:
+            if float(omc) <= OMC_thresh:
                 flag = 1
                 result = str(dir_name) + ' ' + str(score) + ' ' + str(omc) + ' ' + str(A) + ' ' + str(B) + ' ' + str(C) + '\n'
                 new_results += result
