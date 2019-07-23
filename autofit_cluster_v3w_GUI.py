@@ -677,6 +677,7 @@ def triples_calc(param_file,peaklist):
     freq_uncertainty = 0.0
 
     fh_input = open(param_file)
+    job_name = ""
         
     for line in fh_input:
             
@@ -742,6 +743,10 @@ def triples_calc(param_file,peaklist):
                 fitting_peaks_flag = 1
                                     
     file_flag = 1
+
+    if job_name == "":
+        # We accidentally read a file that's not really an input file; let's just return instead
+        return
     
     while file_flag==1:
         marker1 = 0
