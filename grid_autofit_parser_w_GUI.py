@@ -230,9 +230,10 @@ class Worker(QtCore.QObject): # looks like we need to use threading in order to 
                 self.calculate_progress(percentage)
                 current_time = time.time()
                 elapsed_time = current_time - start_time
-                remaining_time = (elapsed_time*100/percentage) - elapsed_time
-                temp_string = "%s percent complete by file number! Taken %s seconds so far, about %s seconds remaining."%(percentage,int(math.ceil(elapsed_time)),int(math.ceil(remaining_time)))
-                self.status.emit(temp_string)
+                if percentage >= 1: # fix divide by zero issue if too many jobs (making percentage = 0 because of int(math.floor))
+                    remaining_time = (elapsed_time*100/percentage) - elapsed_time
+                    temp_string = "%s percent complete by file number! Taken %s seconds so far, about %s seconds remaining."%(percentage,int(math.ceil(elapsed_time)),int(math.ceil(remaining_time)))
+                    self.status.emit(temp_string)
 
         temp_string = "Of the %s jobs, %s of them had output with results of OMC < %s MHz that will be written to file."%(total_num_jobs,jobs_with_interesting_output,self.OMC_thresh)
         self.status.emit(temp_string)
