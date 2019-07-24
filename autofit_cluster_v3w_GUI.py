@@ -2,14 +2,13 @@ import subprocess
 import os
 import sys
 import multiprocessing
-#import timeit
-from multiprocessing import Process
+from multiprocessing import Process, Queue
 import re
 import numpy
 import random
 import string
 import math
-#from collections import OrderedDict
+import time
 #import shutil
 from scipy.interpolate import *
 
@@ -422,7 +421,7 @@ def triples_gen(trans_1_uncert,trans_2_uncert,trans_3_uncert,freq_uncertainty,pe
     
     return trans_1,trans_2,trans_3,trans_1_peaks,trans_2_peaks,trans_3_peaks,peak_1_uncertainty,peak_2_uncertainty,peak_3_uncertainty,num_of_triples
 
-def fit_triples(list_a,list_b,list_c,trans_1,trans_2,trans_3,top_17,peaklist,file_num,A,B,C,DJ,DJK,DK,dJ,dK):
+def fit_triples(q,list_a,list_b,list_c,trans_1,trans_2,trans_3,top_17,peaklist,file_num,A,B,C,DJ,DJK,DK,dJ,dK):
     
     all_combo_file = "all_combo_list%s.txt"%(str(file_num)) 
     
@@ -473,8 +472,10 @@ def fit_triples(list_a,list_b,list_c,trans_1,trans_2,trans_3,top_17,peaklist,fil
 
     sorted_full_list = sorted(unsorted_full_list, key=lambda entry: entry[6])
 
+    line_counter = 0
     for freq_1,inten_1,freq_2,inten_2,freq_3,inten_3,total_diff in sorted_full_list:
         all_combo_list_file.write(str(freq_1)+","+str(inten_1)+","+str(freq_2)+","+str(inten_2)+","+str(freq_3)+","+str(inten_3)+", \n")
+        line_counter += 1
 
     #for freq_1,inten_1,diff_1 in sorted_list_a:#generates all combinations of three peaks from three peaklists
     #    for freq_2,inten_2,diff_2 in sorted_list_b:
@@ -489,6 +490,7 @@ def fit_triples(list_a,list_b,list_c,trans_1,trans_2,trans_3,top_17,peaklist,fil
     triples_counter = 0
     output_file = ""
     regular_counter = 0
+    total_counter = 0
     #error_counter = 0
 
 
@@ -561,6 +563,7 @@ def fit_triples(list_a,list_b,list_c,trans_1,trans_2,trans_3,top_17,peaklist,fil
                 break
         read_fit = (const_list[0],const_list[1], const_list[2],freq_list)
         triples_counter +=1
+        total_counter +=1
         constants = read_fit[0:3]
         freq_17 = read_fit[3]
         freq_17.reverse()
@@ -660,13 +663,24 @@ def fit_triples(list_a,list_b,list_c,trans_1,trans_2,trans_3,top_17,peaklist,fil
                 fh_final.close()
                 triples_counter = 0
                 output_file = ""
+
+            if triples_counter != 0 and (triples_counter % 1000 == 0): # Update progress bar every 1000; this may be too frequent, but is fine for testing
+                frac_output = float(total_counter)/float(line_counter)
+                q.put([frac_output,"Processing",file_num])
+
     fh_final = open("final_output%s.txt"%(str(file_num)), "a")#writes separate file for each processor
     fh_final.write(output_file)
     fh_final.close()
     os.system("sort /r final_output%s.txt /o sorted_final_out%s.txt"%(str(file_num),str(file_num)))#sorts output by score
+
+    if line_counter != 0:
+        frac_output = float(total_counter)/float(line_counter)
+    else: # not any triples because list was so short, this processor didn't have anything to do!
+        frac_output = 1.0
+    q.put([frac_output,"Done",file_num])
     
 
-def triples_calc(param_file,peaklist):
+def triples_calc(worker,param_file,peaklist):
     x = subprocess.Popen("dir /b", stdout=subprocess.PIPE, shell=True)
     x = x.stdout.read().split()
 
@@ -907,6 +921,11 @@ def triples_calc(param_file,peaklist):
         trans_3_peaks = list_a_peaks
 
     processors = int(processors)
+
+    q = Queue()
+    finished_tracker = numpy.zeros(processors, dtype=int)
+    counter_tracker = numpy.zeros(processors)
+
     for num in range(processors):
 
         if trans_1_peaks[-1]=="marker":
@@ -924,10 +943,29 @@ def triples_calc(param_file,peaklist):
             trans_y_peaks = trans_2_peaks
             trans_z_peaks = trans_3_peaks[num]
             
-        vars()["p%s"%str(num)] = Process(target=fit_triples, args=(trans_x_peaks,trans_y_peaks,trans_z_peaks,trans_1,trans_2,trans_3,top_peaks_3cut,peaklist,num,A,B,C,DJ,DJK,DK,dJ,dK))
+        vars()["p%s"%str(num)] = Process(target=fit_triples, args=(q,trans_x_peaks,trans_y_peaks,trans_z_peaks,trans_1,trans_2,trans_3,top_peaks_3cut,peaklist,num,A,B,C,DJ,DJK,DK,dJ,dK))
+
+    #start_time = time.time()
 
     for num in range(processors):
         vars()["p%s"%str(num)].start()
+
+    while True: # have it break when it receives a "done" from everyone
+        try:
+            [frac_counter,message,which_proc] = q.get()
+            counter_tracker[which_proc] = frac_counter
+            total_progress = sum(counter_tracker)
+            percentage = int(math.floor(100.0*(float((total_progress)/float(processors)))))
+            worker.calculate_subprogress(percentage)
+            if message == "Done":
+                finished_tracker[which_proc] = 1
+        except:
+            pass
+        # if everything is done, then break
+        if (all(value != 0 for value in finished_tracker)):
+            #worker.subdone.emit(True)
+            break
+
     for num in range(processors):
         vars()["p%s"%str(num)].join()
             
@@ -995,13 +1033,5 @@ def triples_calc(param_file,peaklist):
 
 if __name__ == '__main__': #multiprocessing imports script as module
 
-	# Called directly from the command line, do stuff.
-	triples_calc(str(sys.argv[1]))
-    
-
-
-
-
-
-
-    
+    # Called directly from the command line, do stuff.
+    triples_calc(str(sys.argv[1]))    
