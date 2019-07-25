@@ -169,12 +169,6 @@ class Ui_Dialog_First_Window(object):
             self.run_autofit_button.setEnabled(False)
             return 0
 
-        a = subprocess.Popen("copy SPFIT.EXE \"%s\SPFIT.EXE\""%(job_name), stdout=subprocess.PIPE, shell=True) # Windows specific, need to have SPFIT.EXE already
-        a.stdout.read()
-
-        a = subprocess.Popen("copy SPCAT.EXE \"%s\SPCAT.EXE\""%(job_name), stdout=subprocess.PIPE, shell=True) # Windows specific, need to have SPCAT.EXE already
-        a.stdout.read()
-
         os.chdir(job_name)
         suffix = job_name.split("/")[-1]
 
