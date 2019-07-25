@@ -387,9 +387,12 @@ class Ui_Dialog_First_Window(object):
         try:
             fh = numpy.loadtxt(data_file,delimiter=',') #loads full experimental data file, not just list of peaks. Should be in directory this script is run from (same as input file).
         except:
-            self.error_message = "%s couldn't be properly loaded. Try again with a different file or check the file for issues."%(data_file) # will probably want to try a whole bunch of things and then only raise an error if none of them work.
-            self.raise_error()
-            return 0
+            try:
+                fh = numpy.loadtxt(data_file)
+            except:
+                self.error_message = "%s couldn't be properly loaded. Try again with a different file or check the file for issues."%(data_file) # will probably want to try a whole bunch of things and then only raise an error if none of them work.
+                self.raise_error()
+                return 0
 
         xdata = copy.copy(fh[:,0]) # Need to handle both of these, just in case it's like an empty file (or has wrong number of columns or something)
         ydata = copy.copy(fh[:,1]) 
