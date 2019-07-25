@@ -226,40 +226,64 @@ class Ui_Dialog_First_Window(object):
         self.gridLayout.addWidget(self.inten_label, 8, 1, 1, 1)
         self.gridLayout.addWidget(self.inten_high_input, 8, 2, 1, 1)
 
-        self.gridLayout.addWidget(QHLine(), 9, 0, 1, 7)
+        self.SPCAT_location_label = QtWidgets.QLabel(Dialog)
+        self.SPCAT_location_label.setObjectName("SPCAT_location_label")
+        self.gridLayout.addWidget(self.SPCAT_location_label, 9, 0, 1, 1)
+        self.SPCAT_location_input = QtWidgets.QLineEdit(Dialog)
+        self.SPCAT_location_input.setObjectName("SPCAT_location_input")
+        self.SPCAT_location_input.setToolTip("Location of local copy of SPCAT")
+        self.gridLayout.addWidget(self.SPCAT_location_input, 9, 1, 1, 3)
+        self.browse_SPCAT_button = QtWidgets.QPushButton(Dialog)
+        self.browse_SPCAT_button.setObjectName("browse_SPCAT_button")
+        self.browse_SPCAT_button.clicked.connect(self.browse_SPCAT)
+        self.gridLayout.addWidget(self.browse_SPCAT_button, 9, 4, 1, 1)
+
+        self.SPFIT_location_label = QtWidgets.QLabel(Dialog)
+        self.SPFIT_location_label.setObjectName("SPFIT_location_label")
+        self.gridLayout.addWidget(self.SPFIT_location_label, 10, 0, 1, 1)
+        self.SPFIT_location_input = QtWidgets.QLineEdit(Dialog)
+        self.SPFIT_location_input.setObjectName("SPFIT_location_input")
+        self.SPFIT_location_input.setToolTip("Location of local copy of SPFIT")
+        self.gridLayout.addWidget(self.SPFIT_location_input, 10, 1, 1, 3)
+        self.browse_SPFIT_button = QtWidgets.QPushButton(Dialog)
+        self.browse_SPFIT_button.setObjectName("browse_SPFIT_button")
+        self.browse_SPFIT_button.clicked.connect(self.browse_SPFIT)
+        self.gridLayout.addWidget(self.browse_SPFIT_button, 10, 4, 1, 1)
+
+        self.gridLayout.addWidget(QHLine(), 11, 0, 1, 7)
 
         self.file_export_label = QtWidgets.QLabel(Dialog) # Need to modify it so it's choosing a directory rather than a file...
         self.file_export_label.setObjectName("file_export_label")
-        self.gridLayout.addWidget(self.file_export_label, 10, 0, 1, 1)
+        self.gridLayout.addWidget(self.file_export_label, 12, 0, 1, 1)
         self.file_export_input = QtWidgets.QLineEdit(Dialog)
         self.file_export_input.setObjectName("file_export_input")
-        self.file_export_input.setToolTip("Name of the file that data will be saved to.")
-        self.gridLayout.addWidget(self.file_export_input, 10, 1, 1, 3)
+        self.file_export_input.setToolTip("Name of the folder that data will be saved to.")
+        self.gridLayout.addWidget(self.file_export_input, 12, 1, 1, 3)
         self.browse_export_button = QtWidgets.QPushButton(Dialog)
         self.browse_export_button.setObjectName("browse_export_button")
         self.browse_export_button.clicked.connect(self.browse_export)
-        self.gridLayout.addWidget(self.browse_export_button, 10, 4, 1, 1)
+        self.gridLayout.addWidget(self.browse_export_button, 12, 4, 1, 1)
 
-        self.gridLayout.addWidget(QHLine(), 11, 0, 1, 7)
+        self.gridLayout.addWidget(QHLine(), 13, 0, 1, 7)
 
         self.gen_files_button = QtWidgets.QPushButton(Dialog) # Needs to be updated to a "do the thing" for a specific, not FT thing.
         self.gen_files_button.setObjectName("gen_files_button")
         self.gen_files_button.clicked.connect(self.gen_files)
-        self.gridLayout.addWidget(self.gen_files_button, 12, 0, 1, 4)
+        self.gridLayout.addWidget(self.gen_files_button, 14, 0, 1, 4)
         self.gen_files_button.setEnabled(False)
         self.exit_button = QtWidgets.QPushButton(Dialog)
         self.exit_button.setObjectName("exit_button")
         self.exit_button.clicked.connect(app.quit) # Probably should interrupt if haven't saved yet
-        self.gridLayout.addWidget(self.exit_button, 12, 4, 1, 3)
+        self.gridLayout.addWidget(self.exit_button, 14, 4, 1, 3)
 
         self.status_window = QtWidgets.QTextEdit(Dialog)
         self.status_window.setObjectName("status_window")
-        self.gridLayout.addWidget(self.status_window, 13, 0, 5, 7) # make it big!!!!
+        self.gridLayout.addWidget(self.status_window, 15, 0, 5, 7) # make it big!!!!
         self.status_window.setReadOnly(True)
 
         self.progress = QtWidgets.QProgressBar(Dialog)
         self.progress.setObjectName("progress")
-        self.gridLayout.addWidget(self.progress, 18, 0, 1, 7)
+        self.gridLayout.addWidget(self.progress, 20, 0, 1, 7)
         self.progress.setValue(0)
 
         self.font_plus_button.shortcut = QtWidgets.QShortcut(QtGui.QKeySequence("Ctrl++"), self.font_plus_button)
@@ -272,6 +296,10 @@ class Ui_Dialog_First_Window(object):
         self.load_button.shortcut.activated.connect(self.load_input)
         self.plot_button.shortcut = QtWidgets.QShortcut(QtGui.QKeySequence("Ctrl+1"), self.plot_button)
         self.plot_button.shortcut.activated.connect(self.plot_input)
+        self.browse_SPCAT_button.shortcut = QtWidgets.QShortcut(QtGui.QKeySequence("Ctrl+T"), self.browse_SPCAT_button)
+        self.browse_SPCAT_button.shortcut.activated.connect(self.browse_SPCAT)
+        self.browse_SPFIT_button.shortcut = QtWidgets.QShortcut(QtGui.QKeySequence("Ctrl+Y"), self.browse_SPFIT_button)
+        self.browse_SPFIT_button.shortcut.activated.connect(self.browse_SPFIT)
         self.browse_export_button.shortcut = QtWidgets.QShortcut(QtGui.QKeySequence("Ctrl+O"), self.browse_export_button)
         self.browse_export_button.shortcut.activated.connect(self.browse_export)
         self.gen_files_button.shortcut = QtWidgets.QShortcut(QtGui.QKeySequence("Ctrl+R"), self.gen_files_button)
@@ -284,6 +312,8 @@ class Ui_Dialog_First_Window(object):
         self.browse_import_button.setWhatsThis("Shortcut: Ctrl+D")
         self.load_button.setWhatsThis("Shortcut: Ctrl+L")
         self.plot_button.setWhatsThis("Shortcut: Ctrl+1")
+        self.browse_SPCAT_button.setWhatsThis("Shortcut: Ctrl+T")
+        self.browse_SPFIT_button.setWhatsThis("Shortcut: Ctrl+Y")
         self.browse_export_button.setWhatsThis("Shortcut: Ctrl+O")
         self.gen_files_button.setWhatsThis("Shortcut: Ctrl+R")
         self.exit_button.setWhatsThis("Shortcut: Ctrl+Q")
@@ -310,6 +340,10 @@ class Ui_Dialog_First_Window(object):
         self.load_button.setText(_translate("Dialog", "Load Data"))
         self.plot_button.setText(_translate("Dialog", "Plot Data"))
         self.inten_label.setText(_translate("Dialog", "<= Peak Height <="))
+        self.SPCAT_location_label.setText(_translate("Dialog", "SPCAT Location"))
+        self.SPFIT_location_label.setText(_translate("Dialog", "SPFIT Location"))
+        self.browse_SPCAT_button.setText(_translate("Dialog", "Browse SPCAT"))
+        self.browse_SPFIT_button.setText(_translate("Dialog", "Browse SPFIT"))
         self.file_export_label.setText(_translate("Dialog", "Output Folder Name"))
         self.browse_export_button.setText(_translate("Dialog", "Browse Output"))
         self.gen_files_button.setText(_translate("Dialog", "Generate Files!"))
@@ -361,6 +395,18 @@ class Ui_Dialog_First_Window(object):
         if folderName:
             self.file_export_input.setText(folderName)
             self.are_we_there_yet()
+
+    def browse_SPCAT(self):
+        fileName, _ = QtWidgets.QFileDialog.getOpenFileName(None, "Location of SPCAT", "", "SPCAT (SPCAT.EXE)") # add filter for SPCAT...
+        if fileName:
+            self.SPCAT_location_input.setText(fileName)
+            self.are_we_there_yet() # Need to build in these hooks also
+
+    def browse_SPFIT(self):
+        fileName, _ = QtWidgets.QFileDialog.getOpenFileName(None, "Location of SPCAT", "", "SPFIT (SPFIT.EXE)") # add filter for SPFIT...
+        if fileName:
+            self.SPFIT_location_input.setText(fileName)
+            self.are_we_there_yet() # Need to build in these hooks also
 
     def raise_error(self):
         self.are_we_there_yet()
@@ -584,6 +630,8 @@ class Ui_Dialog_First_Window(object):
         # Still need to test output label, but may make more sense to do that when we need them. That said, verifying we can create the new directory should be done very early in the worker script.
         data_file = self.file_import_input.text()
         out_dir_name = self.file_export_input.text()
+        SPCAT_location = self.SPCAT_location_input.text()
+        SPFIT_location = self.SPFIT_location_input.text()
 
         job_name = out_dir_name # Do the processing on it here...
 
@@ -609,6 +657,27 @@ class Ui_Dialog_First_Window(object):
             self.error_message = "Couldn't create directory %s. Please use another name and try again."%job_name
             self.raise_error()
             self.file_export_input.setFocus()
+            return 0
+
+        try:
+            y = subprocess.Popen("copy \"%s\" \"%s\SPCAT.EXE\""%(SPCAT_location.replace("/","\\"),job_name.replace("/","\\")), stdout=subprocess.PIPE, shell=True) # Windows specific, need to have SPCAT.EXE already
+            y.stdout.read()
+            for num in range(processors):
+                y = subprocess.Popen("copy \"%s\" \"%s\SPCAT%s.EXE\""%(SPCAT_location.replace("/","\\"),job_name.replace("/","\\"),num), stdout=subprocess.PIPE, shell=True) # Windows specific, need to have SPCAT.EXE already
+                y.stdout.read()
+        except:
+            self.error_message = "Couldn't copy SPCAT from %s to %s. Maybe a permissions error?"%(SPCAT_location,job_name)
+            self.raise_error()
+            self.browse_SPCAT_button.setFocus()
+            return 0
+
+        try:
+            y = subprocess.Popen("copy \"%s\" \"%s\SPFIT.EXE\""%(SPFIT_location.replace("/","\\"),job_name.replace("/","\\")), stdout=subprocess.PIPE, shell=True)
+            y.stdout.read()
+        except:
+            self.error_message = "Couldn't copy SPFIT from %s to %s. Maybe a permissions error?"%(SPFIT_location,job_name)
+            self.raise_error()
+            self.browse_SPFIT_button.setFocus()
             return 0
 
         self.status_window.append("Starting to generate input files!")
@@ -644,6 +713,16 @@ class Ui_Dialog_First_Window(object):
         else:
             data_loaded = False
 
+        if self.SPCAT_location_input.text() != '':
+            have_SPCAT = True
+        else:
+            have_SPCAT = False
+
+        if self.SPFIT_location_input.text() != '':
+            have_SPFIT = True
+        else:
+            have_SPFIT = False
+
         if have_data_file == False:
             self.browse_import_button.setFocus()
             self.load_button.setEnabled(False)
@@ -663,9 +742,19 @@ class Ui_Dialog_First_Window(object):
                     self.gen_files_button.setEnabled(False)
                     return False
                 else: # we have an export filename
-                    self.gen_files_button.setEnabled(True)
-                    self.gen_files_button.setFocus()
-                    return True        
+                    if have_SPCAT == False:
+                        self.browse_SPCAT_button.setFocus()
+                        self.gen_files_button.setEnabled(False)
+                        return False
+                    else: # we have SPCAT
+                        if have_SPFIT == False:
+                            self.browse_SPFIT_button.setFocus()
+                            self.gen_files_button.setEnabled(False)
+                            return False
+                        else: # we have SPFIT
+                            self.gen_files_button.setEnabled(True)
+                            self.gen_files_button.setFocus()
+                            return True        
 
     def progress_update(self,value):
         self.progress.setValue(value)
@@ -801,11 +890,6 @@ class Worker(QtCore.QObject): # looks like we need to use threading in order to 
         splined_spectrum = cubic_spline(self.resolution) # Interpolates experimental spectrum to a 2 kHz resolution with a cubic spline.  Gives better peak-pick values.
         (peaklist, freq_low, freq_high) = peakpicker(splined_spectrum,inten_low,inten_high) # Calls slightly modified version of Cristobal's routine to pick peaks instead of forcing user to do so.
 
-        # Need to check that SPCAT already exists in this directory!
-        for num in range(processors):
-            y = subprocess.Popen("copy SPCAT.EXE \"%s\SPCAT%s.EXE\""%(job_name,num), stdout=subprocess.PIPE, shell=True) # Windows specific, need to have SPCAT.EXE already
-            y.stdout.read() 
-    
         os.chdir(job_name)
         #print "The job_name as of line 767 is %s"%job_name
 
