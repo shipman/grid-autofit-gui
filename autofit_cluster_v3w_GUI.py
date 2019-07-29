@@ -680,7 +680,18 @@ def fit_triples(q,list_a,list_b,list_c,trans_1,trans_2,trans_3,top_17,peaklist,f
     q.put([frac_output,"Done",file_num])
     
 
-def triples_calc(worker,param_file,peaklist):
+def triples_calc(worker,param_file,peaklist,num_procs):
+
+    if "/" in param_file: # we chose selected files rather than a directory
+        file_name = param_file.split("/")[-1]
+        file_directory_components = param_file.split("/")[0:-1]
+        path_string = ""
+        for item in file_directory_components:
+            path_string = path_string + "%s/"%item
+
+        os.chdir(path_string) # If we had chosen a directory, previous thread would have already moved us into it
+        param_file = file_name
+
     x = subprocess.Popen("dir /b", stdout=subprocess.PIPE, shell=True)
     x = x.stdout.read().split()
 
@@ -755,6 +766,9 @@ def triples_calc(worker,param_file,peaklist):
                 check_peaks_list.append(tuples)
             if line.split()[0] == "Check":
                 fitting_peaks_flag = 1
+
+    if num_procs != 0: # Means we've decided to overwrite what's in the input file generated previously.
+        processors = num_procs
                                     
     file_flag = 1
 
