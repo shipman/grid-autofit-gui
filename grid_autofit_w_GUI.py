@@ -466,13 +466,14 @@ class Worker(QtCore.QObject): # looks like we need to use threading in order to 
             progress_counter += 1
             percentage = int(math.floor(100.0*(float((progress_counter)/float(total_num_files)))))
             self.calculate_progress(percentage)
-            current_time = time.time()
-            elapsed_time = current_time - start_time
-            remaining_time = (elapsed_time*100/percentage) - elapsed_time
-            elapsed_time_string = time_formatting(elapsed_time)
-            remaining_time_string = time_formatting(remaining_time)
-            temp_string = "%s percent complete by file number! Taken %s so far, about %s remaining."%(percentage,elapsed_time_string,remaining_time_string)
-            self.status.emit(temp_string)
+            if percentage >= 1:
+                current_time = time.time()
+                elapsed_time = current_time - start_time
+                remaining_time = (elapsed_time*100/percentage) - elapsed_time
+                elapsed_time_string = time_formatting(elapsed_time)
+                remaining_time_string = time_formatting(remaining_time)
+                temp_string = "%s percent complete by file number! Taken %s so far, about %s remaining."%(percentage,elapsed_time_string,remaining_time_string)
+                self.status.emit(temp_string)
             self.reset_subprogress_bar()
 
         self.done.emit(True)
